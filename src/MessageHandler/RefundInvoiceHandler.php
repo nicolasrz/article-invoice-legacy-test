@@ -6,7 +6,9 @@ use App\Entity\InvoiceLine;
 use App\Message\RefundInvoice;
 use App\Repository\InvoiceRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
+#[AsMessageHandler]
 final class RefundInvoiceHandler
 {
     public function __construct(

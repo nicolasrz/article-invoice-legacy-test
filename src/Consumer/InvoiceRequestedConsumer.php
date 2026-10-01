@@ -2,16 +2,19 @@
 
 namespace App\Consumer;
 
+use App\Message\InvoiceRequested;
 use App\Service\InvoiceService;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
+#[AsMessageHandler]
 final class InvoiceRequestedConsumer
 {
     public function __construct(
         private readonly InvoiceService $invoiceService,
     ) {}
 
-    public function consume(string $payload): void
+    public function __invoke(InvoiceRequested $message): void
     {
-        $this->invoiceService->createInvoice(json_decode($payload, true));
+        $this->invoiceService->createInvoice($message->payload);
     }
 }

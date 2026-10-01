@@ -3,9 +3,14 @@
 namespace App\Repository;
 
 use App\Entity\Customer;
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 
-/** @extends EntityRepository<Customer> */
-class CustomerRepository extends EntityRepository
+/** @extends ServiceEntityRepository<Customer> */
+class CustomerRepository extends ServiceEntityRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Customer::class);
+    }
 }
