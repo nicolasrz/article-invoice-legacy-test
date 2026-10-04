@@ -14,5 +14,5 @@ php bin/phpunit --testdox
 
 Two branches replay the refactorings from the article:
 
-- `demo/renommage`: `computeVat()` becomes `vatFor()`. The London test breaks, the Detroit test stays green;
+- `demo/find-country`: `createInvoice` only loads the customer's country instead of the whole customer. The London test breaks, the Detroit test stays green;
 - `demo/big-bang`: `createInvoice` is rewritten from scratch. The London test breaks everywhere, the Detroit test stays green.
