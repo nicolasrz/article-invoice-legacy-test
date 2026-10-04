@@ -35,12 +35,10 @@ final class InvoiceService
             $total += $row['amount'];
         }
 
-        $customer = $invoice->getCustomerId() !== null
-            ? $this->customers->find($invoice->getCustomerId())
-            : null;
+        $country = $this->customers->findCountry($invoice->getCustomerId()) ?? 'FR';
 
         $invoice->setTotal($total);
-        $invoice->setVatAmount($this->taxApi->computeVat($total, $customer?->getCountry() ?? 'FR'));
+        $invoice->setVatAmount($this->taxApi->computeVat($total, $country));
 
         $this->em->persist($invoice);
         $this->em->flush();
