@@ -75,6 +75,6 @@
         "symfony/browser-kit": "7.4.*",
         "symfony/css-selector": "7.4.*"
     },
-    "name": "nicolasrz/article-invoice-legacy",
+    "name": "nicolasrz/article-invoice-legacy-test",
     "description": "Le code de départ de l'article Tester du code qui n'a pas été pensé pour"
 }

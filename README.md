@@ -1,4 +1,4 @@
-# article-invoice-legacy
+# article-invoice-legacy-test
 
 Le code des articles [InvoiceService ne devrait pas exister](https://nicolasrz.me/articles/invoiceservice-ne-devrait-pas-exister) et [Tester du code qui n'a pas été pensé pour](https://nicolasrz.me/articles/tester-du-code-qui-n-a-pas-ete-pense-pour) : un `InvoiceService` fourre-tout, dans une vraie application Symfony (Doctrine, une API de TVA en HTTP, des handlers Messenger).
 
