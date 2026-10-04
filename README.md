@@ -1,11 +1,18 @@
 # article-invoice-legacy
 
-Le `InvoiceService` de l'article [InvoiceService ne devrait pas exister](https://nicolasrz.me/articles/invoiceservice-ne-devrait-pas-exister), dans une vraie application Symfony : Doctrine, une API de TVA en HTTP, des handlers Messenger.
+Le code des articles [InvoiceService ne devrait pas exister](https://nicolasrz.me/articles/invoiceservice-ne-devrait-pas-exister) et [Tester du code qui n'a pas été pensé pour](https://nicolasrz.me/articles/tester-du-code-qui-n-a-pas-ete-pense-pour) : un `InvoiceService` fourre-tout, dans une vraie application Symfony (Doctrine, une API de TVA en HTTP, des handlers Messenger).
 
-Aucun test, volontairement : c'est le point de départ.
+`src/` reste mauvais, volontairement. `createInvoice` est testée de deux façons :
+
+- `tests/CreateInvoiceTest.php` : Detroit, avec les vrais objets et une base SQLite ; seule l'API de TVA est fausse (`tests/FakeTaxApi.php`) ;
+- `tests/CreateInvoiceMockedTest.php` : London, tout est mocké.
 
 ```
 composer install
-php bin/console doctrine:schema:create --env=test
-php bin/phpunit
+php bin/phpunit --testdox
 ```
+
+Deux branches rejouent les refactorings de l'article :
+
+- `demo/renommage` : `computeVat()` devient `vatFor()`. Le test London casse, le test Detroit reste vert ;
+- `demo/big-bang` : `createInvoice` est réécrite de fond en comble. Le test London casse de partout, le test Detroit reste vert.
