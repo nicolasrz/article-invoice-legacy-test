@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Client\TaxApiClient;
+use App\Entity\Customer;
 use App\Entity\Invoice;
 use App\Entity\InvoiceLine;
 use App\Exception\InvoiceNotFoundException;
@@ -23,27 +24,27 @@ final class InvoiceService
 
     public function createInvoice(array $data): Invoice
     {
-        $invoice = new Invoice();
-        $invoice->setCustomerId($data['customer_id'] ?? null);
+        $lines = array_map(
+            fn (array $row) => (new InvoiceLine())->setLabel($row['label'])->setAmount($row['amount']),
+            $data['lines'] ?? [],
+        );
+        $total = array_sum(array_map(fn (InvoiceLine $line) => $line->getAmount(), $lines));
 
-        $total = 0;
-        foreach ($data['lines'] ?? [] as $row) {
-            $line = new InvoiceLine();
-            $line->setLabel($row['label']);
-            $line->setAmount($row['amount']);
-            $invoice->getLines()->add($line);
-            $total += $row['amount'];
-        }
+        $country = $this->em->createQueryBuilder()
+            ->select('c.country')
+            ->from(Customer::class, 'c')
+            ->where('c.id = :id')
+            ->setParameter('id', $data['customer_id'] ?? 0)
+            ->getQuery()
+            ->getOneOrNullResult()['country'] ?? 'FR';
 
-        $customer = $invoice->getCustomerId() !== null
-            ? $this->customers->find($invoice->getCustomerId())
-            : null;
+        $invoice = (new Invoice())
+            ->setCustomerId($data['customer_id'] ?? null)
+            ->setTotal($total)
+            ->setVatAmount($this->taxApi->computeVat($total, $country));
+        array_walk($lines, fn (InvoiceLine $line) => $invoice->getLines()->add($line));
 
-        $invoice->setTotal($total);
-        $invoice->setVatAmount($this->taxApi->computeVat($total, $customer?->getCountry() ?? 'FR'));
-
-        $this->em->persist($invoice);
-        $this->em->flush();
+        $this->em->wrapInTransaction(fn () => $this->em->persist($invoice));
         $this->logger->info('Facture créée', ['invoice' => $invoice->getId()]);
 
         return $invoice;
